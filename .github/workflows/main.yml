@@ -72,7 +72,7 @@ jobs: # The jobs that run in this workflow
             const { pull_request } = context.payload;
             const repo = context.repo.repo;
             const user = pull_request.user.login;
-            const message = `🎉 Congratulations, @${user}! This is your first pull request. Thank you for contributing! 🎉`;
+            const message = `Congratulations, this is your first pull request.`;
             github.issues.createComment({
               issue_number: pull_request.number,
               owner: context.repo.owner,
