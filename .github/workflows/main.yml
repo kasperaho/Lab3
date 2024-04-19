@@ -5,6 +5,9 @@ on: # This action will trigger when an issue is reopened or opened.
       - reopened
       - opened
       - closed # Add "closed" event type
+  pull_request: # Add pull_request event
+    types:
+      - opened # Listen to opened pull requests
 
 jobs: # The jobs that run in this workflow
   label_issues: # the first job is named as label_issues
@@ -30,7 +33,7 @@ jobs: # The jobs that run in this workflow
           body: | # The body of the comment is a message thanking the user for opening the issue.
            Thanks for opening this issue! We'll take a look as soon as possible.
 
-  comment_on_closed_issue: # comments on closed issue
+  comment_on_closed_issue: # New job to comment on closed issue
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -50,6 +53,26 @@ jobs: # The jobs that run in this workflow
             const message = `Issue ${issueNumber} (${issueTitle}) has been closed.`;
             github.issues.createComment({
               issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: repo,
+              body: message
+            });
+
+  congratulate_first_pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened' && github.event.pull_request.number == 1
+    steps:
+      - name: Congratulate on first pull request
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { pull_request } = context.payload;
+            const repo = context.repo.repo;
+            const user = pull_request.user.login;
+            const message = `🎉 Congratulations, @${user}! This is your first pull request. Thank you for contributing! 🎉`;
+            github.issues.createComment({
+              issue_number: pull_request.number,
               owner: context.repo.owner,
               repo: repo,
               body: message
