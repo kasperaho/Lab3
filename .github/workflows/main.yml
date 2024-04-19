@@ -28,6 +28,7 @@ jobs: # The jobs that run in this workflow
 
       - name: Comment on new issue #this is another step that comments on the issue 
         uses: peter-evans/create-or-update-comment@v1 # This step uses the "peter-evans/create-or-update-comment" action to create or update a comment on the issue.
+        if: github.event.action == 'opened' # Add condition to only execute when issue is opened
         with:
           issue-number: ${{ github.event.issue.number }} # The issue number is obtained from the context of the event that triggered the action.
           body: | # The body of the comment is a message thanking the user for opening the issue.
@@ -70,7 +71,7 @@ jobs: # The jobs that run in this workflow
             const { pull_request } = context.payload;
             const repo = context.repo.repo;
             const user = pull_request.user.login;
-            const message = `Congratulations this is your first pull request.`;
+            const message = `🎉 Congratulations, @${user}! This is your first pull request. Thank you for contributing! 🎉`;
             github.issues.createComment({
               issue_number: pull_request.number,
               owner: context.repo.owner,
