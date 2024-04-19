@@ -4,6 +4,8 @@ on: # This action will trigger when an issue is reopened or opened.
     types:
       - reopened
       - opened
+      - closed # Add "closed" event type
+
 jobs: # The jobs that run in this workflow
   label_issues: # the first job is named as label_issues
     runs-on: ubuntu-latest # This job will run on the latest version of Ubuntu.
@@ -20,6 +22,7 @@ jobs: # The jobs that run in this workflow
               repo: context.repo.repo,
               labels: ["issue", "fix"]
             })
+
       - name: Comment on new issue #this is another step that comments on the issue 
         uses: peter-evans/create-or-update-comment@v1 # This step uses the "peter-evans/create-or-update-comment" action to create or update a comment on the issue.
         with:
@@ -27,6 +30,27 @@ jobs: # The jobs that run in this workflow
           body: | # The body of the comment is a message thanking the user for opening the issue.
            Thanks for opening this issue! We'll take a look as soon as possible.
 
-# Comment on when an issue is closed
+  comment_on_closed_issue: # New job to comment on closed issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
 
-# Comment on when an users opens the first pull request 
+      - name: Comment on issue when closed
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue } = context.payload;
+            const issueNumber = issue.number;
+            const issueTitle = issue.title;
+            const repo = context.repo.repo;
+
+            // Comment on the issue when it's closed
+            const message = `Issue ${issueNumber} (${issueTitle}) has been closed.`;
+            github.issues.createComment({
+              issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: repo,
+              body: message
+            });
