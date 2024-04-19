@@ -60,7 +60,7 @@ jobs: # The jobs that run in this workflow
               body: message
             });
 
-  congratulate_first_pr:
+  congratulate_first_pr: # this is implemented but it does not work
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action == 'opened' && github.event.pull_request.number == 1
     steps:
@@ -72,7 +72,7 @@ jobs: # The jobs that run in this workflow
             const { pull_request } = context.payload;
             const repo = context.repo.repo;
             const user = pull_request.user.login;
-            const message = `🎉 Congratulations, @${user}! This is your first pull request. Thank you for contributing! 🎉`;
+            const message = `Congratulations. This is your first pull request.`;
             github.issues.createComment({
               issue_number: pull_request.number,
               owner: context.repo.owner,
