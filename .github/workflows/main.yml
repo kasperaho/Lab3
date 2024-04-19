@@ -30,7 +30,7 @@ jobs: # The jobs that run in this workflow
           body: | # The body of the comment is a message thanking the user for opening the issue.
            Thanks for opening this issue! We'll take a look as soon as possible.
 
-  comment_on_closed_issue: # New job to comment on closed issue
+  comment_on_closed_issue: # comments on closed issue
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
